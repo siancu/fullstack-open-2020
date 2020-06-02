@@ -1,0 +1,1 @@
+The solution to the exercises in part0 are using the same website that is used in the course: https://www.websequencediagrams.com/
