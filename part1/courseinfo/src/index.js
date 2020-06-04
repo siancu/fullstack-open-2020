@@ -8,13 +8,12 @@ const Header = (props) => {
 }
 
 const Content = (props) => {
-  let content = []
-  props.courses.forEach(element => {
-    const htmlElement = <p key={element.part}>{element.part} {element.exercises}</p>
-    content.push(htmlElement)
-  });
   return (
-    <>{content}</>
+    <>
+    <p>{props.part1} {props.exercises1}</p>
+    <p>{props.part2} {props.exercises2}</p>
+    <p>{props.part3} {props.exercises3}</p>    
+    </>
   )
 }
 
@@ -33,16 +32,10 @@ const App = () => {
   const part3 = 'State of a component'
   const exercises3 = 14
 
-  const courses = [
-    {part: part1, exercises: exercises1},
-    {part: part2, exercises: exercises2},
-    {part: part3, exercises: exercises3},
-  ]
-
   return (
     <div>
       <Header course={course} />
-      <Content courses={courses} />
+      <Content part1={part1} part2={part2} part3={part3} exercises1={exercises1} exercises2={exercises2} exercises3={exercises3} />
       <Total total={exercises1 + exercises2 + exercises3} />
     </div>
   )
