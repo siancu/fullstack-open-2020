@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 const Total = ({ course }) => {
-  let sum = 0
-  course.parts.forEach(part => sum += part.exercises)
+  const total = course.parts.reduce((s, p) => s + p.exercises, 0)
+
   return(
-    <p><b>total of {sum} exercises</b></p>
+    <p><b>total of {total} exercises</b></p>
   ) 
 }
 
