@@ -1,6 +1,23 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
+import axios from 'axios'
 
-const Country = ({ country, weather }) => {
+const Country = ({country}) => {
+  const [weather, setWeather] = useState(undefined)
+
+  useEffect(() => {
+
+    const params = {
+      access_key: process.env.REACT_APP_API_KEY,
+      query: country.capital,
+      units: 'm'
+    }
+
+    axios.get('http://api.weatherstack.com/current', {params})
+      .then(response => {
+        setWeather(response.data)
+      })
+  }, [country])
+
   const languages = country.languages.map(language => <li key={language.name}>{language.name}</li>)
   const weatherElement = weather ?
     <div>
@@ -9,7 +26,7 @@ const Country = ({ country, weather }) => {
       <img src={weather.current.weather_icons[0]} width={100} height={100} alt='weather icon'/>
       <p><b>wind: </b>{weather.current.wind_speed} mph direction {weather.current.wind_dir}</p>
     </div>
-    : <div />
+    : <div/>
   return (
     <div>
       <h1>{country.name}</h1>
@@ -17,7 +34,7 @@ const Country = ({ country, weather }) => {
       <p>population {country.population}</p>
       <h2>languages</h2>
       <ul>{languages}</ul>
-      <img src={country.flag} width="200" height="150" alt="country flag" />
+      <img src={country.flag} width="200" height="150" alt="country flag"/>
       {weatherElement}
     </div>
   )

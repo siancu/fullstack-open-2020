@@ -1,4 +1,4 @@
-import React, {useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Country from './components/Country'
 import ButtonWithCountry from './components/ButtonWithCountry'
 import axios from 'axios'
@@ -7,14 +7,12 @@ function App() {
   // state
   const [countries, setCountries] = useState([])
   const [searchCountry, setSearchCountry] = useState('')
-  const [weather, setWeather] = useState(undefined)
 
   // effects
   useEffect(() => {
     const country = searchCountry.trim().toLowerCase()
     if (country.length !== 0) {
-      axios
-        .get(`https://restcountries.eu/rest/v2/name/${country}`)
+      axios.get(`https://restcountries.eu/rest/v2/name/${country}`)
         .then((response) => {
           setCountries(response.data)
         })
@@ -24,40 +22,23 @@ function App() {
     }
   }, [searchCountry])
 
-  useEffect(() => {
-    if (countries.length === 1) {
-      const params = {
-        access_key: process.env.REACT_APP_API_KEY,
-        query: countries[0].capital,
-        units: 'm'
-      }
-
-      axios.get('http://api.weatherstack.com/current', {params})
-        .then(response => {
-          setWeather(response.data)
-        })
-    }
-  }, [countries])
-
-
   // logic
   const handleSearchCountry = (event) => {
     setSearchCountry(event.target.value)
   }
 
   const handleButtonEvent = (country) => {
-    const handler = () => {
+    return () => {
       setCountries([country])
-    }
-    return handler;
+    };
   }
 
   let element
 
   if (countries.length === 0) {
-    element = <div></div>
+    element = <div/>
   } else if (countries.length === 1) {
-    element = <Country country={countries[0]} weather={weather} />
+    element = <Country country={countries[0]} />
   } else if (countries.length < 10) {
     const countryNames = countries.map(country => <ButtonWithCountry key={country.name} country={country} clickHandler={handleButtonEvent} />)
     element = <div>{countryNames}</div>
