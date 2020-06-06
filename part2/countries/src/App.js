@@ -1,4 +1,6 @@
 import React, {useState, useEffect } from 'react';
+import Country from './components/Country'
+import ButtonWithCountry from './components/ButtonWithCountry'
 import axios from 'axios'
 
 function App() {
@@ -26,28 +28,22 @@ function App() {
     setSearchCountry(event.target.value)
   }
 
+  const handleButtonEvent = (country) => {
+    const handler = () => {
+      setCountries([country])
+    }
+    return handler;
+  }
+
   let element = undefined
   
   if (countries.length === 0) {
     element = <div></div>
   } else if (countries.length === 1) {
-    const country = countries[0]
-    const languages = country.languages.map(language => <li key={language.name}>{language.name}</li>)
-    element = 
-      <div>
-        <h1>{country.name}</h1>
-        <p>capital {country.capital}</p>
-        <p>population {country.population}</p>
-        <h2>languages</h2>
-        <ul>{languages}</ul>
-        <img src={country.flag} width="200" height="150" alt="country flag" />
-      </div>
+    element = <Country country={countries[0]} />
   } else if (countries.length < 10) {
-    const countryNames = countries.map(country => <li key={country.name}>{country.name}</li>)
-    element = 
-      <ul>
-        {countryNames}
-      </ul>
+    const countryNames = countries.map(country => <ButtonWithCountry key={country.name} country={country} clickHandler={handleButtonEvent} />)
+    element = <div>{countryNames}</div>
   } else {
     element = <p>Too many matches, specify another filter</p>
   }
