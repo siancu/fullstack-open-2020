@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import phonebookService from "./services/phonebook";
+import Notification from "./components/Notification"
+import phonebookService from "./services/phonebook"
 
 const App = () => {
   const [persons, setPersons] = useState([])
+  const [currentPerson, setCurrentPerson] = useState({})
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearchTerm, setNewSearchTerm] = useState('')
+  const [showNotification, setShowNotification] = useState(false)
 
   useEffect(() => {
     phonebookService.getAll()
@@ -24,6 +27,9 @@ const App = () => {
         phonebookService
           .update(person.id, newPerson)
           .then(returnedPerson => {
+            setCurrentPerson(returnedPerson)
+            setShowNotification(true)
+            setTimeout(() => setShowNotification(false), 2000)
             setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
           })
       }
@@ -31,6 +37,9 @@ const App = () => {
       const newPerson = {name: newName.trim(), number: newNumber.trim()}
       phonebookService.create(newPerson)
         .then(returnedPerson => {
+          setCurrentPerson(returnedPerson)
+          setShowNotification(true)
+          setTimeout(() => setShowNotification(false), 2000)
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
@@ -66,9 +75,14 @@ const App = () => {
     ? persons
     : persons.filter(person => person.name.trim().toLowerCase().includes(newSearchTerm))
 
+  const notification = showNotification
+    ? <Notification message={`Added ${currentPerson.name}`} />
+    : <div />
+
   return (
     <div>
       <h2>Phonebook</h2>
+      {notification}
       <Filter searchTerm={newSearchTerm} searchHandler={handleSearch} />
       
       <h3>Add a new</h3>
