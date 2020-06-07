@@ -7,7 +7,7 @@ import Persons from './components/Persons'
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
-  const [newPhone, setNewPhone] = useState('')
+  const [newNumber, setNewNumber] = useState('')
   const [newSearchTerm, setNewSearchTerm] = useState('')
 
   useEffect(() => {
@@ -23,9 +23,9 @@ const App = () => {
     if (persons.some(p => p.name === newName)) {
       alert(`${newName} is already added to the phonebook`)
     } else {
-      setPersons(persons.concat({name: newName.trim(), phone: newPhone.trim()}))
+      setPersons(persons.concat({name: newName.trim(), number: newNumber.trim()}))
       setNewName('')      
-      setNewPhone('')
+      setNewNumber('')
     }
   }
 
@@ -33,8 +33,8 @@ const App = () => {
     setNewName(event.target.value)
   }
 
-  const handlePhoneChange = (event) => {
-    setNewPhone(event.target.value)
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value)
   }
 
   const handleSearch = (event) => {
@@ -56,8 +56,8 @@ const App = () => {
         submitHandler={addNewName} 
         name={newName} 
         nameHandler={handleNameChange} 
-        phone={newPhone}
-        phoneHandler={handlePhoneChange} />
+        number={newNumber}
+        numberHandler={handleNumberChange} />
       
       <h3>Numbers</h3>
       <Persons persons={personsToShow} />

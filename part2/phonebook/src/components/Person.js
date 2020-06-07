@@ -4,7 +4,7 @@ const Person = ({ person }) => {
     return (
         <tr>
             <td>{person.name}</td>
-            <td>{person.phone}</td>
+            <td>{person.number}</td>
         </tr>
     )
 }
