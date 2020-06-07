@@ -12,6 +12,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newSearchTerm, setNewSearchTerm] = useState('')
   const [showNotification, setShowNotification] = useState(false)
+  const [showError, setShowError] = useState(false)
 
   useEffect(() => {
     phonebookService.getAll()
@@ -61,11 +62,17 @@ const App = () => {
 
   const handleDelete = id => {
     const selectedPerson = persons.find(p => p.id === id)
+    setCurrentPerson(selectedPerson)
     if (window.confirm(`delete ${selectedPerson.name} ?`)) {
       phonebookService.remove(id)
         .then(_ => {
           const newPersons = persons.filter(p => p.id !== id)
           setPersons(newPersons)
+        })
+        .catch(error => {
+          setPersons(persons.filter(p => p.id !== id))
+          setShowError(true)
+          setTimeout(() => setShowError(false), 2000)
         })
     }
   }
@@ -76,13 +83,18 @@ const App = () => {
     : persons.filter(person => person.name.trim().toLowerCase().includes(newSearchTerm))
 
   const notification = showNotification
-    ? <Notification message={`Added ${currentPerson.name}`} />
+    ? <Notification message={`Added ${currentPerson.name}`} className="notification" />
+    : <div />
+
+  const error = showError
+    ? <Notification message={`Information of ${currentPerson.name} has already been removed from server`} className="error" />
     : <div />
 
   return (
     <div>
       <h2>Phonebook</h2>
       {notification}
+      {error}
       <Filter searchTerm={newSearchTerm} searchHandler={handleSearch} />
       
       <h3>Add a new</h3>
