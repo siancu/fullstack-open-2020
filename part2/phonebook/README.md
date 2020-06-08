@@ -1,3 +1,5 @@
+App added to Heroku, both frontend and backend: The app is now deployed on heroku at the address: https://pure-brushlands-53653.herokuapp.com/
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
