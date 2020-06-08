@@ -16,7 +16,10 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "json-server -p3001 --watch db.json"
+    "build:ui": "rm -fr build && cd ../fullstack-open-2020/part2/phonebook && npm run build --prod && cp -r build ../../fso2020-phonebook-backend/",
+    "deploy": "git push heroku master",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
+    "logs:prod": "heroku logs --tail"
   },
   "eslintConfig": {
     "extends": "react-app"
