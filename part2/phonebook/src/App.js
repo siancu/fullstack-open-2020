@@ -7,17 +7,20 @@ import phonebookService from "./services/phonebook"
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  const [currentPerson, setCurrentPerson] = useState({})
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newSearchTerm, setNewSearchTerm] = useState('')
-  const [showNotification, setShowNotification] = useState(false)
-  const [showError, setShowError] = useState(false)
+  const [notification, setNotification] = useState(null)
 
   useEffect(() => {
     phonebookService.getAll()
       .then(phonebookEntries => setPersons(phonebookEntries))
   }, [])
+
+  const sendNotification = (message, typeOfNotification) => {
+    setNotification({message, typeOfNotification})
+    setTimeout(() => setNotification(null), 2000)
+  }
 
   const addNewName = (event) => {
     event.preventDefault()
@@ -28,9 +31,7 @@ const App = () => {
         phonebookService
           .update(person.id, newPerson)
           .then(returnedPerson => {
-            setCurrentPerson(returnedPerson)
-            setShowNotification(true)
-            setTimeout(() => setShowNotification(false), 2000)
+            sendNotification(`Changed the number for ${returnedPerson.name}`, 'success')
             setPersons(persons.map(p => p.id !== person.id ? p : returnedPerson))
           })
       }
@@ -38,12 +39,13 @@ const App = () => {
       const newPerson = {name: newName.trim(), number: newNumber.trim()}
       phonebookService.create(newPerson)
         .then(returnedPerson => {
-          setCurrentPerson(returnedPerson)
-          setShowNotification(true)
-          setTimeout(() => setShowNotification(false), 2000)
+          sendNotification(`Added ${returnedPerson.name}`, 'success')
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+        })
+        .catch(error => {
+          sendNotification(error.response.data.error, 'error')
         })
     }
   }
@@ -62,17 +64,16 @@ const App = () => {
 
   const handleDelete = id => {
     const selectedPerson = persons.find(p => p.id === id)
-    setCurrentPerson(selectedPerson)
     if (window.confirm(`delete ${selectedPerson.name} ?`)) {
       phonebookService.remove(id)
         .then(_ => {
           const newPersons = persons.filter(p => p.id !== id)
           setPersons(newPersons)
+          sendNotification(`Person with name ${selectedPerson.name} was deleted`, 'success')
         })
         .catch(error => {
           setPersons(persons.filter(p => p.id !== id))
-          setShowError(true)
-          setTimeout(() => setShowError(false), 2000)
+          sendNotification(`Information of ${selectedPerson.name} has already been removed from server`, 'error')
         })
     }
   }
@@ -82,19 +83,10 @@ const App = () => {
     ? persons
     : persons.filter(person => person.name.trim().toLowerCase().includes(newSearchTerm))
 
-  const notification = showNotification
-    ? <Notification message={`Added ${currentPerson.name}`} className="notification" />
-    : <div />
-
-  const error = showError
-    ? <Notification message={`Information of ${currentPerson.name} has already been removed from server`} className="error" />
-    : <div />
-
   return (
     <div>
       <h2>Phonebook</h2>
-      {notification}
-      {error}
+      <Notification notification={notification} />
       <Filter searchTerm={newSearchTerm} searchHandler={handleSearch} />
       
       <h3>Add a new</h3>
